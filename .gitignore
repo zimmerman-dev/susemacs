@@ -1,0 +1,11 @@
+elpa/
+eln-cache/
+auto-save-list/
+init.el~
+places
+recentf
+projectile.bookmarks.old
+eshell/
+snippets/
+url/
+*.elc
