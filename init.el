@@ -1,4 +1,11 @@
-;; -*- lexical-binding: t; -*-
+;;; init.el --- Personal Emacs configuration  -*- lexical-binding: t; -*-
+
+;;; Commentary:
+;; Personal Emacs configuration.
+;; Organized by feature using use-package.
+;; Designed for C++, web development, and general programming workflows.
+
+;;; Code:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Package System & Bootstrapping
@@ -25,15 +32,15 @@
 ;; Theme & Font Setup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Load Doom Themes
+;; Doom Themes package
 (use-package doom-themes
   :config
   (load-theme 'doom-one t)
   (doom-themes-org-config)) ;; Optional: org-mode styles
 
 ;; Set default font (only if available)
-(when (member "JetBrainsMono Nerd Font Mono" (font-family-list))
-  (set-face-attribute 'default nil :font "JetBrainsMono Nerd Font Mono" :height 140))
+(when (member "ZedMono Nerd Font Mono" (font-family-list))
+  (set-face-attribute 'default nil :font "ZedMono Nerd Font Mono" :height 140))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -52,7 +59,8 @@
 
 ;; Recent Items
 (recentf-mode 1)
-(setq recentf-max-saved-items 100)
+(with-eval-after-load 'recentf
+  (setq recentf-max-saved-items 100))
 
 ;; Save position in file
 (save-place-mode 1)
@@ -61,44 +69,44 @@
 ;;(set-frame-parameter nil 'alpha-background 90)
 ;;(add-to-list 'default-frame-alist '(alpha-background . 90))
 
+;; Default window size
+(setq initial-frame-alist
+      '((top . 100)     ;; vertical offset from top
+        (left . 100)   ;; horizontal offset from left
+        (width . 80)
+        (height . 60)))
+
+(setq initial-frame-alist default-frame-alist)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Org Mode Setup
+;; Startup Behavior
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package org
-  :config
-  (setq org-agenda-files '("~/Documents/Notes/todo.org")))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Terminal Integration
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package vterm
-  :commands vterm
-  :custom
-  (vterm-always-compile-module t)
-  :bind
-  ("<f7>" . vterm))
+;; Startup Behavior
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (dolist (buf '("*scratch*"))
+              (when (get-buffer buf)
+                (kill-buffer buf)))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Custom Splash Screen / Dashboard
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Projectile
+;; Projectile package
 (use-package projectile
   :init
   (setq projectile-project-search-path '("~/projects/"))
   (setq projectile-completion-system 'auto)
   (projectile-mode +1))
 
-;; Dashboard
+;; Dashboard package
 (use-package dashboard
   :config
   ;; Banner image
-  (setq dashboard-startup-banner "~/.emacs.d/assets/SUSEmacs1.png")
+  (setq dashboard-startup-banner "~/.emacs.d/assets/hmacs.png")
 
   ;; Show these sections
   (setq dashboard-items '((recents  . 5)
@@ -115,6 +123,33 @@
   ;; Initialize dashboard on startup
   (dashboard-setup-startup-hook))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Org Mode Setup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Org mode package
+(use-package org
+  :config
+  (setq org-agenda-files '("~/Documents/Notes/todo.org")))
+
+;; Word Wrap
+(add-hook 'org-mode-hook #'visual-line-mode)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Terminal Integration
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; VTerm package
+(use-package vterm
+  :commands vterm
+  :custom
+  (vterm-always-compile-module t)
+  :bind
+  ("<f7>" . vterm))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LSP
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -124,12 +159,13 @@
   :commands (lsp lsp-deferred)
   :hook ((c++-mode . lsp-deferred)
          (c-mode   . lsp-deferred))
+
   :init
-  (setq lsp-keymap-prefix "C-c l")  ;; Optional: LSP commands under C-c l
+  (setq lsp-keymap-prefix "C-c l")  ;; LSP commands under C-c l
   :config
   (setq lsp-enable-symbol-highlighting t
         lsp-enable-snippet t
-        lsp-enable-on-type-formatting nil)) ;; we’ll format on save instead
+        lsp-enable-on-type-formatting nil)) ;; format on save instead
 
 ;; LSP-ui package
 (use-package lsp-ui
@@ -139,6 +175,28 @@
   (setq lsp-ui-doc-enable t
         lsp-ui-doc-position 'at-point
         lsp-ui-sideline-enable t))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Web Dev
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Web-mode package
+(use-package web-mode
+  :mode ("\\.html?\\'" "\\.ejs\\'")
+  :hook ((web-mode . lsp-deferred)
+	 (web-mode . emmet-mode))
+   
+  :config
+  (setq web-mode-enable-auto-pairing t)
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-css-indent-offset 2))
+
+;; Emmet-mode package
+(use-package emmet-mode
+  :hook ((html-mode . emmet-mode)
+         (css-mode  . emmet-mode)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -175,6 +233,7 @@
 (use-package yasnippet-snippets
   :after yasnippet)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Auto-Pairs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -195,6 +254,47 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Rebinding
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Rebind `make-frame-command`
+(global-set-key (kbd "C-c n") `make-frame-command)
+;; Unbind the orginal keybinding
+(global-unset-key (kbd "C-x 52"))
+
+;; Rebind `move-end-of-line`
+(global-set-key (kbd "C-;") `move-end-of-line)
+;; Unbind the original keybinding
+(global-unset-key (kbd "C-e"))
+
+;; Rebind `other-frame`
+(global-set-key (kbd "C-c f") `other-frame)
+;; Unbind the original keybinding
+(global-unset-key (kbd "C-x 5o"))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Custom Functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Buffer Navigation - Toggle Mode
+(defun my/buffer-toggle-map ()
+  "Transient keymap where `n` and `p` navigate buffers."
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "n") #'next-buffer)
+    (define-key map (kbd "p") #'previous-buffer)
+    map))
+
+(defun my/enter-buffer-toggle-mode ()
+  "Enter transient buffer navigation mode with `n` and `p`."
+  (interactive)
+  (message "Buffer Toggle Mode: [n] next | [p] previous | [any other key] exit")
+  (set-transient-map (my/buffer-toggle-map) t))
+
+(global-set-key (kbd "C-x t") #'my/enter-buffer-toggle-mode)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Custom Face Settings (auto-generated)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -212,10 +312,10 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:background "#232629" :foreground "#eff0f1"))))
  '(cursor ((t (:background "#0d7b69"))))
+ '(font-lock-builtin-face ((t (:foreground "#0b0" :weight bold))))
  '(font-lock-comment-face ((t (:foreground "#4c4f69" :slant italic))))
  '(font-lock-function-name-face ((t (:foreground "#0d7b69"))))
  '(font-lock-keyword-face ((t (:foreground "#0d7b69" :weight bold))))
- '(font-lock-builtin-face ((t (:foreground "#0b0" :weight bold))))
  '(font-lock-string-face ((t (:foreground "#0b0"))))
  '(font-lock-type-face ((t (:foreground "#0b0" :weight bold))))
  '(font-lock-variable-name-face ((t (:foreground "#eff0f1"))))
@@ -229,3 +329,5 @@
  '(mode-line-inactive ((t (:background "#232629" :foreground "#4c4f69" :box nil))))
  '(region ((t (:background "#0d7b69" :foreground "#232629")))))
 
+(provide 'init)
+;;; init.el ends here

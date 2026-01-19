@@ -1,1 +1,1 @@
-#s(lsp-session ("/home/zimmerman-dev/dev/workspaces/testsuite") nil #s(hash-table test equal) #s(hash-table test equal) #s(hash-table test equal))
+#s(lsp-session ("/home/zimmerman-dev/dev/scratch" "/home/zimmerman-dev/dev/workspaces/testsuite") nil #s(hash-table test equal) #s(hash-table test equal) #s(hash-table test equal))
