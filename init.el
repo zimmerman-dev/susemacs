@@ -58,6 +58,8 @@
 (setq inhibit-startup-message t)
 
 ;; Recent Items
+(defvar recentf-max-saved-items)
+
 (recentf-mode 1)
 (with-eval-after-load 'recentf
   (setq recentf-max-saved-items 100))
@@ -153,19 +155,24 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LSP
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; LSP
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; LSP-mode package
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :hook ((c++-mode . lsp-deferred)
-         (c-mode   . lsp-deferred))
-
+         (c-mode   . lsp-deferred)
+	 (web-mode . lsp-deferred)
+	 (js2-mode . lsp-deferred))
+  
   :init
-  (setq lsp-keymap-prefix "C-c l")  ;; LSP commands under C-c l
+  (setq lsp-keymap-prefix "C-c l")  ;; Optional: LSP commands under C-c l
   :config
   (setq lsp-enable-symbol-highlighting t
         lsp-enable-snippet t
-        lsp-enable-on-type-formatting nil)) ;; format on save instead
+        lsp-enable-on-type-formatting nil)) ;; we’ll format on save instead
 
 ;; LSP-ui package
 (use-package lsp-ui
@@ -175,28 +182,6 @@
   (setq lsp-ui-doc-enable t
         lsp-ui-doc-position 'at-point
         lsp-ui-sideline-enable t))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Web Dev
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Web-mode package
-(use-package web-mode
-  :mode ("\\.html?\\'" "\\.ejs\\'")
-  :hook ((web-mode . lsp-deferred)
-	 (web-mode . emmet-mode))
-   
-  :config
-  (setq web-mode-enable-auto-pairing t)
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-code-indent-offset 2)
-  (setq web-mode-css-indent-offset 2))
-
-;; Emmet-mode package
-(use-package emmet-mode
-  :hook ((html-mode . emmet-mode)
-         (css-mode  . emmet-mode)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -210,6 +195,30 @@
   (setq company-idle-delay 0.1
         company-minimum-prefix-length 1
         company-tooltip-align-annotations t))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Web dev
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Web-mode package
+(use-package web-mode
+  :mode (("\\.html?\\'" . web-mode))
+  :config
+  (setq web-mode-enable-auto-quoting nil))
+
+;; Emmet-mode package
+(use-package emmet-mode
+  :hook (web-mode css-mode)
+  :config
+  (setq emmet-self-closing-tag-style " /"))
+
+;; Javascript (js2-mode) package
+(use-package js2-mode
+  :mode (("\\.js\\'" . js2-mode))
+  :interpreter "node"
+  :config
+  (setq js2-basic-offset 2))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
