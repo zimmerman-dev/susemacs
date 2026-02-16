@@ -1,1 +1,1 @@
-("~/projects/cc-neovim/" "~/Documents/School/Math of Finance/" "~/.emacs.d/" "~/Documents/Notes/Cpp/")
+("~/Documents/School/" "~/.emacs.d/" "~/projects/cc-neovim/")

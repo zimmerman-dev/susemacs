@@ -302,6 +302,16 @@
 
 (global-set-key (kbd "C-x t") #'my/enter-buffer-toggle-mode)
 
+;; New line above current line
+(defun open-line-above ()
+  "Insert an empty line above the current line without moving point."
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (open-line 1)))
+
+(global-set-key (kbd "C-M-o") #'open-line-above)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Custom Face Settings (auto-generated)
