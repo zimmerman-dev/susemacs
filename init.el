@@ -274,7 +274,7 @@
 ;; Rebind `move-end-of-line`
 (global-set-key (kbd "C-;") `move-end-of-line)
 ;; Unbind the original keybinding
-(global-unset-key (kbd "C-e"))
+;; (global-unset-key (kbd "C-e"))
 
 ;; Rebind `other-frame`
 (global-set-key (kbd "C-c f") `other-frame)
