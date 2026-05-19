@@ -1,1 +1,1 @@
-("~/Documents/School/" "~/.emacs.d/" "~/projects/cc-neovim/")
+("~/.emacs.d/" "~/Documents/School/" "~/projects/cc-neovim/")
