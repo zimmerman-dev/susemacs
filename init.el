@@ -47,6 +47,11 @@
 ;; UI Tweaks
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Title bars
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
 ;; Line numbers
 (global-display-line-numbers-mode 1)
 (column-number-mode 1)
@@ -76,7 +81,7 @@
         (width . 80)
         (height . 60)))
 
-(setq initial-frame-alist default-frame-alist)
+(setq default-frame-alist initial-frame-alist)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -182,7 +187,7 @@
 (use-package dashboard
   :config
   ;; Banner image
-  (setq dashboard-startup-banner "~/.emacs.d/assets/hmacs.png")
+  (setq dashboard-startup-banner "~/.emacs.d/assets/vv.png")
 
   ;; Show these sections
   (setq dashboard-items '((recents  . 5)
@@ -236,6 +241,7 @@
   :commands (lsp lsp-deferred)
   :hook ((c++-mode . lsp-deferred)
          (c-mode   . lsp-deferred)
+	 (php-mode . lsp-deferred)
 	 (web-mode . lsp-deferred)
 	 (js2-mode . lsp-deferred))
   
@@ -292,6 +298,15 @@
   :config
   (setq js2-basic-offset 2))
 
+;; PHP mode package
+(use-package php-mode
+  :ensure t
+  :mode "\\.php\\'")
+
+;; SQL settings
+(use-package sql
+  :ensure nil
+  :mode (("\\.sql\\'" . sql-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Diagnostics
@@ -355,7 +370,7 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Custom Functions
+;; Custom Functions and Behaviors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Buffer Navigation - Toggle Mode
@@ -384,6 +399,18 @@
 
 (global-set-key (kbd "C-M-o") #'open-line-above)
 
+;; No auto backup files
+(setq make-backup-files nil)
+
+;; Newline function
+(defun my/newline-below ()
+  "Create a new line below the current line, no matter where point is."
+  (interactive)
+  (end-of-line)
+  (newline-and-indent))
+
+(global-set-key (kbd "C-<return>") #'my/newline-below)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Custom Face Settings (auto-generated)
@@ -396,35 +423,37 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    '(avy company dashboard doom-themes emmet-mode flycheck js2-mode
-	 lsp-ui projectile pulsar rainbow-mode ultra-scroll vterm
-	 web-mode yaml-mode yasnippet-snippets)))
+	 lsp-ui php-mode projectile pulsar rainbow-mode ultra-scroll
+	 vterm web-mode yaml-mode yasnippet-snippets)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:background "#0D1317" :foreground "#e7decd"))))
- '(cursor ((t (:background "#232ED1"))))
- '(font-lock-builtin-face ((t (:foreground "#6564DB" :weight bold))))
+ '(default ((t (:background "#0D1317" :foreground "#F0FFF0"))))
+ '(cursor ((t (:background "#0A2472"))))
+ '(font-lock-builtin-face ((t (:foreground "#0E6BA8" :weight bold))))
  '(font-lock-comment-face ((t (:foreground "#4c4f69" :slant italic))))
- '(font-lock-function-name-face ((t (:foreground "#c678dd"))))
- '(font-lock-keyword-face ((t (:foreground "#c678dd" :weight bold))))
- '(font-lock-string-face ((t (:foreground "#6564DB"))))
- '(font-lock-type-face ((t (:foreground "#6564DB" :weight bold))))
- '(font-lock-variable-name-face ((t (:foreground "#e7decd"))))
+ '(font-lock-function-name-face ((t (:foreground "#0A7E8C"))))
+ '(font-lock-keyword-face ((t (:foreground "#0A7E8C" :weight bold))))
+ '(font-lock-string-face ((t (:foreground "#0E6BA8"))))
+ '(font-lock-type-face ((t (:foreground "#0E6BA8" :weight bold))))
+ '(font-lock-variable-name-face ((t (:foreground "#F0FFF0"))))
  '(font-lock-warning-face ((t (:foreground "#89D2DC" :weight bold))))
+ '(dashboard-heading-face ((t (:foreground "#0A7E8C" :weight bold))))
  '(fringe ((t (:background "#0D1317"))))
- '(highlight ((t (:background "#232ED1" :foreground "#0D1317"))))
+ '(highlight ((t (:background "#0A2472" :foreground "#0D1317"))))
  '(hl-line ((t (:background "#101D42"))))
- '(show-paren-match ((t (:foreground "#29bf12"))))
  '(line-number ((t (:foreground "#4c4f69" :background "#0D1317"))))
- '(line-number-current-line ((t (:foreground "#e7decd" :background "#0D1317" :weight bold))))
- '(minibuffer-prompt ((t (:foreground "#232ED1" :weight bold))))
- '(mode-line ((t (:background "#0D1317" :foreground "#e7decd" :box nil))))
+ '(line-number-current-line ((t (:foreground "#F0FFF0" :background "#0D1317" :weight bold))))
+ '(minibuffer-prompt ((t (:foreground "#0A2472" :weight bold))))
+ '(mode-line ((t (:background "#0D1317" :foreground "#F0FFF0" :box nil))))
  '(mode-line-inactive ((t (:background "#0D1317" :foreground "#4c4f69" :box nil))))
- '(pulsar-generic ((t (:background "#232ED1" :extend t))))
- '(region ((t (:background "#232ED1" :foreground "#0D1317")))))
+ '(pulsar-generic ((t (:background "#89D2DC" :extend t))))
+ '(region ((t (:background "#0A2472" :foreground "#0D1317"))))
+ '(show-paren-match ((t (:foreground "#29bf12"))))
+ '(show-paren-mismatch ((t (:foreground "#29bf12")))))
 
 (provide 'init)
 ;;; init.el ends here
